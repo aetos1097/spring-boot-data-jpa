@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.ord" lang="en">
+<html xmlns:th="http://thymeleaf.ord" lang="es">
 <head>
     <meta charset="UTF-8">
     <title th:text="${titulo}"></title>
-<!--    Css de bootstrap-->
+    <!--    Css de bootstrap-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Spring Boot</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,21 +35,36 @@
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">Nombre</label>
         <div class="col-sm-4">
-            <input type="text" th:field="*{nombre}" class="form-control"/>
+            <input type="text" th:field="*{nombre}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+            <small class ="form-text text-alert" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">Apellido</label>
         <div class="col-sm-4">
-            <input type="text" th:field="*{apellido}" class="form-control"/>
+            <input type="text" th:field="*{apellido}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+            <small class ="form-text text-alert" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></small>
+
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">Email</label>
         <div class="col-sm-4">
-            <input type="text" th:field="*{email}" class="form-control"/>
+<!--            para validar con spring en el input se debe poner type="text" en ves de email-->
+            <input type="text" th:field="*{email}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+            <small class ="form-text text-alert" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">Fecha</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" th:field="*{createAt}" th:errorclass="'form-control alert-danger'"/>
+            <small class ="form-text text-alert" th:if="${#fields.hasErrors('createAt')}" th:errors="*{createAt}"></small>
+
         </div>
     </div>
 
@@ -61,7 +76,7 @@
 
 
     <!--    el id es auto-incrementable por tal razon se deja solo como hiden input-->
-    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{id}"/>
 </form>
 </div>
 </body>
