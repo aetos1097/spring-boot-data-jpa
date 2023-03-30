@@ -12,7 +12,9 @@ public class ClienteDaoImpl implements IClienteDao {
 
     @PersistenceContext//de forma automatica inyecta el entityManager segun  la configracion de la unidad de depedencia que contiene el proveedor de jpa
     private EntityManager em;// se encarga de manejar las clases de entidades
-    @Transactional(readOnly = true)// toma el contenido del metodo y lo envuelve dentro de una trasaccion
+    /*Como ya se unsa la int4erfaz de servicio los trsaccionales s evan a la clase ClienteServiceImple es decir:
+    * @Transactional(readOnly = true)// toma el contenido del metodo y lo envuelve dentro de una transaccion*/
+    //
     @Override
     public List findAll() {
         return em.createQuery("from Cliente").getResultList();// aparece error pero si funciona
@@ -24,7 +26,7 @@ public class ClienteDaoImpl implements IClienteDao {
     }
     //metodo que toma el objeto cliente y lo guarda
     @Override
-    @Transactional//sin readOnly porque este es de escritura
+    //se usa @Transactional en ClienteServiceImpl//sin readOnly porque este es de escritura
     public void save(Cliente cliente) {//este es tanto para guardar como para editar
         /*Validacion para que se pueda guardar o editar un campo o el cliente
         * para esto se mira si el cliente es distinto de nulo y mayor a 0
@@ -38,7 +40,7 @@ public class ClienteDaoImpl implements IClienteDao {
     }
 
     @Override
-    @Transactional//se deja asi porque estara actualizando la tabla
+    //se usa @Transactional en ClienteServiceImpl//se deja asi porque estara actualizando la tabla
     public void delete(Long id) {
         //primero obtenemos el cliente que queremos eliminar
         //Cliente cliente = findOne(id);

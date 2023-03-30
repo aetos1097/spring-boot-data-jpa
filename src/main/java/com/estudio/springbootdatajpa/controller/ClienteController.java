@@ -2,6 +2,7 @@ package com.estudio.springbootdatajpa.controller;
 
 import com.estudio.springbootdatajpa.models.dao.IClienteDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
+import com.estudio.springbootdatajpa.models.service.IClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,18 +13,25 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import java.util.Map;
 
+/**
+ * Clase donde iran los controladores
+ */
 @Controller
 @SessionAttributes("cliente")//indicamos que se va a guardar en los atributos de la seccion del objeto cliente
 public class ClienteController {
     @Autowired
-    private IClienteDao clienteDao;
+    private IClienteService clienteService;
+
+    // ya no inyectamos el Dao si no la fachada IClienteServiceprivate IClienteDao clienteDao;
     //listar los elementos
     @RequestMapping(value = "/listar",method= RequestMethod.GET)//lo mismo que el get
     public String listar(Model model){
         model.addAttribute("titulo","Listado de Clientes");
-        model.addAttribute("clientes",clienteDao.findAll());
+        model.addAttribute("clientes",clienteService.findAll());
         return "listar";
     }
+
+
     //crear elementos
     @GetMapping("/form")
     public String crear(Map<String,Object> model){
@@ -40,7 +48,7 @@ public class ClienteController {
         Cliente cliente = null;
         //validamos que el id sea mayo 0
         if(id > 0){
-            cliente=clienteDao.findOne(id);
+            cliente=clienteService.findOne(id);
         }else{
             return "redirect:/listar";
         }
@@ -48,6 +56,8 @@ public class ClienteController {
         model.put("titulo","Editar cliente");
         return "form";
     }
+
+
     //guardamos los eleementos
     @PostMapping("/form")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, SessionStatus status){//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
@@ -60,7 +70,7 @@ public class ClienteController {
             model.addAttribute("titulo","Formulario Cliente");
             return "form";//si hay errores nos devolvemos al formulario con ruta /form
         }
-        clienteDao.save( cliente);
+        clienteService.save(cliente);
         status.setComplete();//con este metodo elimina el objeto cliente de la seccion es buena practica para no colocar en el html hidden id
         return  "redirect:listar";
     }
@@ -68,7 +78,7 @@ public class ClienteController {
     @RequestMapping(value="/eliminar/{id}")
     public String eliminar(@PathVariable Long id){
         if(id > 0){
-            clienteDao.delete(id);
+            clienteService.delete(id);
         }
         return "redirect:/listar";
     }
