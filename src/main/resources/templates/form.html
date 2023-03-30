@@ -28,56 +28,73 @@
     </div>
 </nav>
 
-<div class="container"></div>
-<h1 class="text-primary border border-success border-top-0 border-left-0 border-right-0" th:text="${titulo}"></h1>
-<form th:action="@{/form}" th:object="${cliente}" method="post">
+<div class="container">
 
-    <div class="form-group row">
-        <label class="col-sm-1 col-form-label">Nombre</label>
-        <div class="col-sm-4">
-            <input type="text" th:field="*{nombre}" class="form-control" th:errorclass="'form-control alert-danger'"/>
-            <small class ="form-text text-alert" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
-        </div>
+    <h1 class="text-primary border border-success border-top-0 border-left-0 border-right-0" th:text="${titulo}"></h1>
+    <!--    Div para mostrar todos los mensajes de error pero que este div no sea visible al usuario-->
+    <!--    Dentro del div llamamos el objeto cliente-->
+    <div th:object="${cliente}" th:remove="tag">
+        <!--validamos si hay errores-->
+        <ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+            <!--con un ciclo for anotamos cada error-->
+            <li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+        </ul>
     </div>
+    <form th:action="@{/form}" th:object="${cliente}" method="post">
 
-    <div class="form-group row">
-        <label class="col-sm-1 col-form-label">Apellido</label>
-        <div class="col-sm-4">
-            <input type="text" th:field="*{apellido}" class="form-control" th:errorclass="'form-control alert-danger'"/>
-            <small class ="form-text text-alert" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></small>
-
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">Nombre</label>
+            <div class="col-sm-4">
+                <input type="text" th:field="*{nombre}" class="form-control"
+                       th:errorclass="'form-control alert-danger'"/>
+                <small class="form-text text-alert" th:if="${#fields.hasErrors('nombre')}"
+                       th:errors="*{nombre}"></small>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group row">
-        <label class="col-sm-1 col-form-label">Email</label>
-        <div class="col-sm-4">
-<!--            para validar con spring en el input se debe poner type="text" en ves de email-->
-            <input type="text" th:field="*{email}" class="form-control" th:errorclass="'form-control alert-danger'"/>
-            <small class ="form-text text-alert" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">Apellido</label>
+            <div class="col-sm-4">
+                <input type="text" th:field="*{apellido}" class="form-control"
+                       th:errorclass="'form-control alert-danger'"/>
+                <small class="form-text text-alert" th:if="${#fields.hasErrors('apellido')}"
+                       th:errors="*{apellido}"></small>
 
+            </div>
         </div>
-    </div>
 
-    <div class="form-group row">
-        <label class="col-sm-1 col-form-label">Fecha</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" th:field="*{createAt}" th:errorclass="'form-control alert-danger'"/>
-            <small class ="form-text text-alert" th:if="${#fields.hasErrors('createAt')}" th:errors="*{createAt}"></small>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">Email</label>
+            <div class="col-sm-4">
+                <!--            para validar con spring en el input se debe poner type="text" en ves de email-->
+                <input type="text" th:field="*{email}" class="form-control"
+                       th:errorclass="'form-control alert-danger'"/>
+                <small class="form-text text-alert" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
 
+            </div>
         </div>
-    </div>
 
-    <div class="form-group row">
-        <div class="col-sm-6">
-            <input type="submit" value="Crear Cliente" class="btn btn-primary"/>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label">Fecha</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" th:field="*{createAt}"
+                       th:errorclass="'form-control alert-danger'"/>
+                <small class="form-text text-alert" th:if="${#fields.hasErrors('createAt')}"
+                       th:errors="*{createAt}"></small>
+
+            </div>
         </div>
-    </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <input type="submit" value="Crear Cliente" class="btn btn-primary"/>
+            </div>
+        </div>
 
 
-    <!--    el id es auto-incrementable por tal razon se deja solo como hiden input-->
-    <input type="hidden" th:field="*{id}"/>
-</form>
+        <!--    el id es auto-incrementable por tal razon se deja solo como hiden input-->
+<!--        <input type="hidden" th:field="*{id}"/>-->
+    </form>
 </div>
 </body>
 </html>

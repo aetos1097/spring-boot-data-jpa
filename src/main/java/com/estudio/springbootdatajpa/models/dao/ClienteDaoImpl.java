@@ -21,6 +21,18 @@ public class ClienteDaoImpl implements IClienteDao {
     @Override
     @Transactional//sin readOnly porque este es de escritura
     public void save(Cliente cliente) {
-        em.persist(cliente);//em.persist es un metodo de el entytManager para guardar los datos
+        /*Validacion para que se pueda guardar o editar un campo o el cliente
+        * para esto se mira si el cliente es distinto de nulo y mayor a 0
+        * si es asi se usa el metodo merge de EntityManager para mexclar los datos anteriores con los nuevos y los guarda
+        * pero si es un usuario nuevo solo guarde lo que envia ya que el id viene como nulo*/
+        if(cliente.getId() != null && cliente.getId() >0){
+            em.merge(cliente);
+        }else {
+            em.persist(cliente);//em.persist es un metodo de el entytManager para guardar los datos
+        }    }
+    //Listamos solo un id
+    @Override
+    public Cliente findOne(Long id) {
+        return em.find(Cliente.class,id);//Gracias al EntityManager se puede usar el metodo find
     }
 }
