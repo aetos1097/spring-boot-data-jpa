@@ -3,6 +3,8 @@ package com.estudio.springbootdatajpa.models.service;
 import com.estudio.springbootdatajpa.models.dao.IClienteDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,12 @@ public class ClienteServiceImpl implements IClienteService {
     @Transactional(readOnly = true)// toma el contenido del metodo y lo envuelve dentro de una transaccion
     public List<Cliente> findAll() {
         return (List<Cliente>) clienteDao.findAll();//retorna un iterable se debe hace run cast
+    }
+
+    @Override
+    @Transactional(readOnly = true)//solo sera lectura
+    public Page<Cliente> findAll(Pageable pageable) {
+        return clienteDao.findAll(pageable);
     }
 
 
