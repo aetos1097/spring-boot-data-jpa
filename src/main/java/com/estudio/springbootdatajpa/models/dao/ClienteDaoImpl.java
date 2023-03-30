@@ -17,10 +17,15 @@ public class ClienteDaoImpl implements IClienteDao {
     public List findAll() {
         return em.createQuery("from Cliente").getResultList();// aparece error pero si funciona
     }
+    //Listamos solo un id
+    @Override
+    public Cliente findOne(Long id) {
+        return em.find(Cliente.class,id);//Gracias al EntityManager se puede usar el metodo find
+    }
     //metodo que toma el objeto cliente y lo guarda
     @Override
     @Transactional//sin readOnly porque este es de escritura
-    public void save(Cliente cliente) {
+    public void save(Cliente cliente) {//este es tanto para guardar como para editar
         /*Validacion para que se pueda guardar o editar un campo o el cliente
         * para esto se mira si el cliente es distinto de nulo y mayor a 0
         * si es asi se usa el metodo merge de EntityManager para mexclar los datos anteriores con los nuevos y los guarda
@@ -29,10 +34,15 @@ public class ClienteDaoImpl implements IClienteDao {
             em.merge(cliente);
         }else {
             em.persist(cliente);//em.persist es un metodo de el entytManager para guardar los datos
-        }    }
-    //Listamos solo un id
+        }
+    }
+
     @Override
-    public Cliente findOne(Long id) {
-        return em.find(Cliente.class,id);//Gracias al EntityManager se puede usar el metodo find
+    @Transactional//se deja asi porque estara actualizando la tabla
+    public void delete(Long id) {
+        //primero obtenemos el cliente que queremos eliminar
+        //Cliente cliente = findOne(id);
+        //em.remove(cliente) podemos colocar esta linea o simplifcar lo con:
+        em.remove(findOne(id));
     }
 }

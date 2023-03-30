@@ -64,4 +64,12 @@ public class ClienteController {
         status.setComplete();//con este metodo elimina el objeto cliente de la seccion es buena practica para no colocar en el html hidden id
         return  "redirect:listar";
     }
+    //controlador para eliminar un elemento de la lista
+    @RequestMapping(value="/eliminar/{id}")
+    public String eliminar(@PathVariable Long id){
+        if(id > 0){
+            clienteDao.delete(id);
+        }
+        return "redirect:/listar";
+    }
 }
