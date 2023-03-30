@@ -20,7 +20,7 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     @Transactional(readOnly = true)// toma el contenido del metodo y lo envuelve dentro de una transaccion
     public List<Cliente> findAll() {
-        return clienteDao.findAll();
+        return (List<Cliente>) clienteDao.findAll();//retorna un iterable se debe hace run cast
     }
 
 
@@ -34,12 +34,13 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     @Transactional(readOnly = true)
     public Cliente findOne(Long id) {
-        return clienteDao.findOne(id);
+        return clienteDao.findById(id).orElse(null);//este devuelve un optional, es decir envuelve el resultado de la consulta
+        //En este caso escojemos este metodo orElse para que si no lo encuentro retorne un null
     }
 
     @Transactional//se deja asi porque estara actualizando la tabla
     @Override
     public void delete(Long id) {
-        clienteDao.delete(id);
+        clienteDao.deleteById(id);
     }
 }
