@@ -5,7 +5,7 @@ import com.estudio.springbootdatajpa.models.entity.Cliente;
 import java.util.List;
 
 /**
- * Interfaz que tomara todas las clases dao de mnaera general
+ * Interfaz que tomara todas las clases dao de manera general
  */
 public interface IClienteService {
     public List<Cliente> findAll();
