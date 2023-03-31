@@ -9,6 +9,7 @@
             <a class="page-link" th:if="${not page.first}" th:href="@{${page.url}(page=0)}">Primera</a>
         </li>
 
+<!--        flecha atras(izquierda)-->
         <li class="page-item" th:class="${not page.hasPrevious? 'page-item disabled':'page-item'}">
             <span class="page-link" th:if="${not page.hasPrevious}">&laquo;</span>
             <a class="page-link" th:if="${page.hasPrevious}" th:href="@{${page.url}(page=${page.paginaActual-2})}">&laquo;</a>
@@ -20,16 +21,16 @@
             <a class="page-link" th:if="${not item.actual}" th:href="@{${page.url}(page=${item.numero-1})}" th:text="${item.numero}"></a>
         </li>
 
-
+<!--    flecha hacia delante (derecha)-->
         <li class="page-item" th:class="${not page.hasNext? 'page-item disabled':'page-item'}">
             <span class="page-link" th:if="${not page.hasNext}"></span>
-            <a class="page-link" th:if="${page.hasNext}" th:href="@{${page.url}(page=${page.paginaActual-2})}">&raquo;</a>
+            <a class="page-link" th:if="${page.hasNext}" th:href="@{${page.url}(page=${page.paginaActual})}">&raquo;</a>
 
         </li>
 
         <li class="page-item" th:class="${page.last? 'page-item disabled':'page-item'}">
             <span class="page-link" th:if="${page.last}">ultimo</span>
-            <a class="page-link" th:if="${not page.last}" th:href="@{${page.url}(page=${page.totalPaginas-1})}">Ultimo</a>
+            <a class="page-link" th:if="${not page.last}" th:href="@{${page.url}(page=${page.totalPaginas-1})}">Ultima</a>
 
         </li>
     </ul>
