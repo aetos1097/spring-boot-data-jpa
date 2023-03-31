@@ -40,6 +40,8 @@ public class Cliente implements Serializable {
         //metodo para registrar antes que se guarde a la base de datos
         createAt = new Date();
     }*/
+
+    private String foto;
     private static final long serialVersionUID = 1L;//esta línea de código sirve para mantener la compatibilidad en la serialización de objetos en Java al proporcionar un identificador único a cada clase serializable.
 
     public Long getId() {
@@ -80,5 +82,13 @@ public class Cliente implements Serializable {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 }

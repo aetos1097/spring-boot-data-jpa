@@ -14,8 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -80,15 +85,31 @@ public class ClienteController {
 
     //guardamos los elementos
     @PostMapping("/form")
-    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
+    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file")MultipartFile foto, RedirectAttributes flash, SessionStatus status) {//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
         /*Siempre van juntos El objeto con @Valid y el BindingResult y de resto lo demas
          El BindinfResult es una interfaz que captura los errores en las validaciones
         Ahora validamos con un if si hay algun error en los campos del formulario*/
         if (result.hasErrors()) {
             /*si el objeto se llama igual que en el formulario con metodo get entonces se pasa automatico
-            //si no se debe poner en los argumentos :(@Valid @ModelAttribute Cliente cliente, BindingResult result,Model model)*/
+            //si no se debe poner en los argumentos :(@Valid @ModelAttribute Cliente cliente, BindingResult result,Model model)
+            @RequestParam("file")MultipartFile foto->parametro para inyectar una imagen al html*/
             model.addAttribute("titulo", "Formulario Cliente");
             return "form";//si hay errores nos devolvemos al formulario con ruta /form
+        }
+        //Foto
+        if(!foto.isEmpty()){//verificamos si hay alguna foto para manipularla
+            //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
+            Path directorioRecursos= Paths.get("src//main//resources//static//uploads");//path se importa de interfaz nio
+            String rootPath=directorioRecursos.toFile().getAbsolutePath();//con este objeto string ya podemos mover la imagen del directorio
+            try {
+                byte[] bytes = foto.getBytes();
+                Path rutaCompleta=Paths.get(rootPath + "//"+ foto.getOriginalFilename());
+                Files.write(rutaCompleta,bytes);//creamos y escribimos la ruta en el directorio
+                flash.addFlashAttribute("info","Has subido correctamente "+ foto.getOriginalFilename()+"");//mensaje de exito
+                cliente.setFoto(foto.getOriginalFilename());//pasamos el nombre d ela foto al cliente, queda guardada en la db
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         String mensajeFlash = (cliente.getId() != null) ? "Cliente editado con Exito!" : "Cliente creado con exito!";
         clienteService.save(cliente);
@@ -102,7 +123,7 @@ public class ClienteController {
     public String eliminar(@PathVariable Long id, RedirectAttributes flash) {
         if (id > 0) {
             clienteService.delete(id);
-            flash.addFlashAttribute("success", "Cliente Eliminado cocn exito");
+            flash.addFlashAttribute("success", "Cliente Eliminado con exito");
         }
         return "redirect:/listar";
     }
