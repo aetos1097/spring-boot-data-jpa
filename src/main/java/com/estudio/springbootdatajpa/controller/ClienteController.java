@@ -27,16 +27,16 @@ public class ClienteController {
     @Autowired
     private IClienteService clienteService;
 
-    // ya no inyectamos el Dao si no la fachada IClienteServiceprivate IClienteDao clienteDao;
+    // ya no inyectamos el Dao si no la fachada IClienteService private IClienteDao clienteDao;
     //listar los elementos
     @RequestMapping(value = "/listar", method = RequestMethod.GET)//lo mismo que el get
     public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
         /*se coloca como paramtro de entrada @RequestParam(name="page", defaultValue="0")int page
         para la paginacion al momento de listar*/
-        Pageable pageRequest = PageRequest.of(page, 5);/*se importa la interfaz y con el metodo  PageRequest.of(page,4)
+        Pageable pageRequest = PageRequest.of(page, 5);/*se importa la interfaz y con el metodo  PageRequest.of(page,5)
         Damos el parametro de entrada page y cuantos elementos queremos mostrar(0)
         */
-        Page<Cliente> clientes = clienteService.findAll(pageRequest);
+        Page<Cliente> clientes = clienteService.findAll(pageRequest);//realizamos el servicio de filtrado
         PageRender<Cliente> pageRender = new PageRender<>("/listar", clientes);
 
         model.addAttribute("titulo", "Listado de Clientes");
@@ -63,7 +63,7 @@ public class ClienteController {
         Cliente cliente = null;
         //validamos que el id sea mayor 0
         if (id > 0) {
-            cliente = clienteService.findOne(id);
+            cliente = clienteService.findOne(id);//me encuentra el valor del id que se pasa en la request
             if (cliente == null) {
                 flash.addFlashAttribute("error", "El id del cliente no existe en la base de datos");
                 return "redirect:/listar";
@@ -78,7 +78,7 @@ public class ClienteController {
     }
 
 
-    //guardamos los eleementos
+    //guardamos los elementos
     @PostMapping("/form")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
         /*Siempre van juntos El objeto con @Valid y el BindingResult y de resto lo demas
