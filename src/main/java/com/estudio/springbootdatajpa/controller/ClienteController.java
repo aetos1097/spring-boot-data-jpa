@@ -32,6 +32,19 @@ public class ClienteController {
     @Autowired
     private IClienteService clienteService;
 
+    //Metodo para ver el detalle a travez del id
+    @GetMapping(value="/ver/{id}")
+    public String ver(@PathVariable(value="id")Long id,Map<String,Object> model,RedirectAttributes flash){
+        Cliente cliente = clienteService.findOne(id);
+        if(cliente == null){
+            flash.addFlashAttribute("error" ,cliente);
+            return "redirect:/listar";
+        }
+        model.put("cliente", cliente);
+        model.put("titulo","Detalle cliente: " + cliente.getNombre());
+        return "ver";
+    }
+
     // ya no inyectamos el Dao si no la fachada IClienteService private IClienteDao clienteDao;
     //listar los elementos
     @RequestMapping(value = "/listar", method = RequestMethod.GET)//lo mismo que el get
@@ -99,8 +112,9 @@ public class ClienteController {
         //Foto
         if(!foto.isEmpty()){//verificamos si hay alguna foto para manipularla
             //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
-            Path directorioRecursos= Paths.get("src//main//resources//static//uploads");//path se importa de interfaz nio
-            String rootPath=directorioRecursos.toFile().getAbsolutePath();//con este objeto string ya podemos mover la imagen del directorio
+//            Path directorioRecursos= Paths.get("src//main//resources//static//uploads");//path se importa de interfaz nio
+//            String rootPath=directorioRecursos.toFile().getAbsolutePath();//con este objeto string ya podemos mover la imagen del directorio
+            String rootPath="C://Temp//uploads";//esta es par auna ruta externa separada al proyecto
             try {
                 byte[] bytes = foto.getBytes();
                 Path rutaCompleta=Paths.get(rootPath + "//"+ foto.getOriginalFilename());
