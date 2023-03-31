@@ -5,6 +5,8 @@ import com.estudio.springbootdatajpa.models.dao.IClienteDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
 import com.estudio.springbootdatajpa.models.service.IClienteService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Clase donde iran los controladores
@@ -32,6 +35,7 @@ public class ClienteController {
     @Autowired
     private IClienteService clienteService;
 
+    private final Logger log = LoggerFactory.getLogger(getClass());// con esto podemos mostrar por consola
     //Metodo para ver el detalle a travez del id
     @GetMapping(value="/ver/{id}")
     public String ver(@PathVariable(value="id")Long id,Map<String,Object> model,RedirectAttributes flash){
@@ -109,18 +113,28 @@ public class ClienteController {
             model.addAttribute("titulo", "Formulario Cliente");
             return "form";//si hay errores nos devolvemos al formulario con ruta /form
         }
-        //Foto
+        //Agregar una Foto
         if(!foto.isEmpty()){//verificamos si hay alguna foto para manipularla
             //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
-//            Path directorioRecursos= Paths.get("src//main//resources//static//uploads");//path se importa de interfaz nio
+            String uniqueFilename= UUID.randomUUID().toString() + "_"+ foto.getOriginalFilename();
+            Path rootPath= Paths.get("uploads").resolve(uniqueFilename);// se dejafoto.getOriginalFilename() sin el uniqueFilename
+            Path rootAbsolutePath=rootPath.toAbsolutePath();
+            log.info("rootPath: "+ rootPath);
+            log.info("rootAbsolutePath: "+ rootAbsolutePath);
+            /*
+            Path directorioRecursos= Paths.get("src//main//resources//static//uploads");//path se importa de interfaz nio
 //            String rootPath=directorioRecursos.toFile().getAbsolutePath();//con este objeto string ya podemos mover la imagen del directorio
-            String rootPath="C://Temp//uploads";//esta es par auna ruta externa separada al proyecto
+            Esta linea se cambia para colocar una ruta absoluta en el path
+            String rootPath="C://Temp//uploads";//esta es par a una ruta externa separada al proyecto*/
             try {
                 byte[] bytes = foto.getBytes();
+                /*Esto cuando es String como Path
                 Path rutaCompleta=Paths.get(rootPath + "//"+ foto.getOriginalFilename());
                 Files.write(rutaCompleta,bytes);//creamos y escribimos la ruta en el directorio
+                */
+                Files.copy(foto.getInputStream(),rootAbsolutePath);
                 flash.addFlashAttribute("info","Has subido correctamente "+ foto.getOriginalFilename()+"");//mensaje de exito
-                cliente.setFoto(foto.getOriginalFilename());//pasamos el nombre d ela foto al cliente, queda guardada en la db
+                cliente.setFoto(uniqueFilename);//pasamos el nombre d ela foto al cliente, queda guardada en la db
             } catch (IOException e) {
                 e.printStackTrace();
             }
