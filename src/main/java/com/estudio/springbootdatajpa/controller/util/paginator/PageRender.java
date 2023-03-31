@@ -9,7 +9,7 @@ import java.util.List;
  * Clase que se encarga de caclular los elmentos como total de paginas, numeero de paginas, etc...
  * @param <T>
  */
-public class PageRender<T> {/*Se usa los generic de java ya que se purfr paginar una lista de clientes
+public class PageRender<T> {/*Se usa los generic de java ya que se puede paginar una lista de clientes
     o productos o cualquier tipo de entidad*/
 
     private String url;
