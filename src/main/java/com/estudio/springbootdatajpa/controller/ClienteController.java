@@ -8,9 +8,13 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,8 +72,24 @@ public class ClienteController {
     // ya no se usa esta linea porque se quiere traer pero paginar los clientes model.addAttribute("clientes",clienteService.findAll());
         return "listar";
     }
-
-
+    //Cargar la imagen de forma preprogamtica atravez de la respuesta d eun resource
+    @GetMapping("/uploads/{filename:.+}")//el filename.+ ayuda a que la extencion no se trunque con un .png,.jpg, etc..
+    public ResponseEntity<Resource> verFoto(@PathVariable String filename){// El Resource se toma dle paquete .core.io
+        Path pathFoto= Paths.get("uploads").resolve(filename).toAbsolutePath();
+        log.info("pathFoto:" + pathFoto);
+        Resource recurso = null;
+        try {
+           recurso = new UrlResource(pathFoto.toUri());//se carga la imagen
+           if(!recurso.exists() && !recurso.isReadable()){
+               throw new RuntimeException("Error: no se pudo cargar la imagen "+ pathFoto.toString());
+           }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + recurso.getFilename()+ "\"")
+                .body(recurso);//se pasa a al respuesta atravez del responseEntity y se anexa el recurso al cuerpo de la respuesta
+    }
     //crear elementos
     @GetMapping("/form")
     public String crear(Map<String, Object> model) {
@@ -116,7 +137,7 @@ public class ClienteController {
         //Agregar una Foto
         if(!foto.isEmpty()){//verificamos si hay alguna foto para manipularla
             //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
-            String uniqueFilename= UUID.randomUUID().toString() + "_"+ foto.getOriginalFilename();
+            String uniqueFilename= UUID.randomUUID().toString() + "_"+ foto.getOriginalFilename();//reescribimos el nombre de la foto a un nombreunico
             Path rootPath= Paths.get("uploads").resolve(uniqueFilename);// se dejafoto.getOriginalFilename() sin el uniqueFilename
             Path rootAbsolutePath=rootPath.toAbsolutePath();
             log.info("rootPath: "+ rootPath);

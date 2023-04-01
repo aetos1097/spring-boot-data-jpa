@@ -8,17 +8,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.file.Paths;
 
+/**
+ * Esta clase ayuda a mostrar la imagen despues de que se haya subido al servido
+ */
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        WebMvcConfigurer.super.addResourceHandlers(registry);
-
-        String resourcePath= Paths.get("uploads").toAbsolutePath().toUri().toString();//variable para que el path sea dinamico
-        log.info("resourcePath");
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(resourcePath);//ruta de carpeta externa del programa(Esta se debe crear)
-        //.addResourceLocations("file:C:/Temp/uploads/") path fijo no dinamico
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        WebMvcConfigurer.super.addResourceHandlers(registry);
+//
+//        String resourcePath= Paths.get("uploads").toAbsolutePath().toUri().toString();//variable para que el path sea dinamico
+//        log.info("resourcePath");
+//        registry.addResourceHandler("/uploads/**")
+//                .addResourceLocations(resourcePath);//ruta de carpeta externa del programa(Esta se debe crear)
+//        //.addResourceLocations("file:C:/Temp/uploads/") path fijo no dinamico
+//    }
 }
