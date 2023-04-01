@@ -4,6 +4,7 @@ import com.estudio.springbootdatajpa.controller.util.paginator.PageRender;
 import com.estudio.springbootdatajpa.models.dao.IClienteDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
 import com.estudio.springbootdatajpa.models.service.IClienteService;
+import com.estudio.springbootdatajpa.models.service.IUploadFileService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,20 +39,23 @@ import java.util.UUID;
 @Controller
 @SessionAttributes("cliente")//indicamos que se va a guardar en los atributos de la seccion del objeto cliente
 public class ClienteController {
+
     @Autowired
     private IClienteService clienteService;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());// con esto podemos mostrar por consola
+    @Autowired
+    private IUploadFileService uploadFileService;
+
     //Metodo para ver el detalle a travez del id
-    @GetMapping(value="/ver/{id}")
-    public String ver(@PathVariable(value="id")Long id,Map<String,Object> model,RedirectAttributes flash){
+    @GetMapping(value = "/ver/{id}")
+    public String ver(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
         Cliente cliente = clienteService.findOne(id);
-        if(cliente == null){
-            flash.addFlashAttribute("error" ,cliente);
+        if (cliente == null) {
+            flash.addFlashAttribute("error", cliente);
             return "redirect:/listar";
         }
         model.put("cliente", cliente);
-        model.put("titulo","Detalle cliente: " + cliente.getNombre());
+        model.put("titulo", "Detalle cliente: " + cliente.getNombre());
         return "ver";
     }
 
@@ -69,28 +73,25 @@ public class ClienteController {
 
         model.addAttribute("titulo", "Listado de Clientes");
         model.addAttribute("clientes", clientes);
-        model.addAttribute("page",pageRender);
-    // ya no se usa esta linea porque se quiere traer pero paginar los clientes model.addAttribute("clientes",clienteService.findAll());
+        model.addAttribute("page", pageRender);
+        // ya no se usa esta linea porque se quiere traer pero paginar los clientes model.addAttribute("clientes",clienteService.findAll());
         return "listar";
     }
-    //Cargar la imagen de forma preprogamtica atravez de la respuesta d eun resource
+
+    //Cargar la imagen de forma preprogamatica atravez de la respuesta d eun resource
     @GetMapping("/uploads/{filename:.+}")//el filename.+ ayuda a que la extencion no se trunque con un .png,.jpg, etc..
-    public ResponseEntity<Resource> verFoto(@PathVariable String filename){// El Resource se toma dle paquete .core.io
-        Path pathFoto= Paths.get("uploads").resolve(filename).toAbsolutePath();
-        log.info("pathFoto:" + pathFoto);
+    public ResponseEntity<Resource> verFoto(@PathVariable String filename) {// El Resource se toma del paquete .core.io
         Resource recurso = null;
         try {
-           recurso = new UrlResource(pathFoto.toUri());//se carga la imagen
-           if(!recurso.exists() && !recurso.isReadable()){
-               throw new RuntimeException("Error: no se pudo cargar la imagen "+ pathFoto.toString());
-           }
+            recurso = uploadFileService.load(filename);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + recurso.getFilename()+ "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")
                 .body(recurso);//se pasa a al respuesta atravez del responseEntity y se anexa el recurso al cuerpo de la respuesta
     }
+
     //crear elementos
     @GetMapping("/form")
     public String crear(Map<String, Object> model) {
@@ -124,7 +125,7 @@ public class ClienteController {
 
     //guardamos los elementos
     @PostMapping("/form")
-    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file")MultipartFile foto, RedirectAttributes flash, SessionStatus status) {//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
+    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status) {//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
         /*Siempre van juntos El objeto con @Valid y el BindingResult y de resto lo demas
          El BindinfResult es una interfaz que captura los errores en las validaciones
         Ahora validamos con un if si hay algun error en los campos del formulario*/
@@ -136,44 +137,26 @@ public class ClienteController {
             return "form";//si hay errores nos devolvemos al formulario con ruta /form
         }
         //Agregar una Foto
-        if(!foto.isEmpty()){//verificamos si hay alguna foto para manipularla
-            if(cliente.getId() != null
-                    && cliente.getId() >0
+        if (!foto.isEmpty()) {//verificamos si hay alguna foto para manipularla
+            if (cliente.getId() != null
+                    && cliente.getId() > 0
                     && cliente.getFoto() != null
-                    && cliente.getFoto().length() >0){
+                    && cliente.getFoto().length() > 0) {
                 // validamso que al foto exista remplazamos la foto antigua por la nueva
-                Path rootPath = Paths.get("uploads").resolve(cliente.getFoto()).toAbsolutePath();//obtenemso el Path entero de la imagen
-                File archivo= rootPath.toFile();
-                //comprabamos que el archivo se pueda leer y exista
-                if(archivo.exists() && archivo.canRead()){
-                    archivo.delete();
-
-                }
+                uploadFileService.delete(cliente.getFoto());
             }
-            //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
-            String uniqueFilename= UUID.randomUUID().toString() + "_"+ foto.getOriginalFilename();//reescribimos el nombre de la foto a un nombreunico
-            Path rootPath= Paths.get("uploads").resolve(uniqueFilename);// se dejafoto.getOriginalFilename() sin el uniqueFilename
-            Path rootAbsolutePath=rootPath.toAbsolutePath();
-            log.info("rootPath: "+ rootPath);
-            log.info("rootAbsolutePath: "+ rootAbsolutePath);
-            /*
-            Path directorioRecursos= Paths.get("src//main//resources//static//uploads");//path se importa de interfaz nio
-//            String rootPath=directorioRecursos.toFile().getAbsolutePath();//con este objeto string ya podemos mover la imagen del directorio
-            Esta linea se cambia para colocar una ruta absoluta en el path
-            String rootPath="C://Temp//uploads";//esta es par a una ruta externa separada al proyecto*/
+            String uniqueFilename = null;
             try {
-                byte[] bytes = foto.getBytes();
-                /*Esto cuando es String como Path
-                Path rutaCompleta=Paths.get(rootPath + "//"+ foto.getOriginalFilename());
-                Files.write(rutaCompleta,bytes);//creamos y escribimos la ruta en el directorio
-                */
-                Files.copy(foto.getInputStream(),rootAbsolutePath);
-                flash.addFlashAttribute("info","Has subido correctamente "+ foto.getOriginalFilename()+"");//mensaje de exito
-                cliente.setFoto(uniqueFilename);//pasamos el nombre d ela foto al cliente, queda guardada en la db
+                uniqueFilename = uploadFileService.copy(foto);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
+            flash.addFlashAttribute("info", "Has subido correctamente " + foto.getOriginalFilename() + "");//mensaje de exito
+            cliente.setFoto(uniqueFilename);//pasamos el nombre d ela foto al cliente, queda guardada en la db
+
         }
+        //Crear Cliente
         String mensajeFlash = (cliente.getId() != null) ? "Cliente editado con Exito!" : "Cliente creado con exito!";
         clienteService.save(cliente);
         status.setComplete();//con este metodo elimina el objeto cliente de la seccion es buena practica para no colocar en el html hidden id
@@ -185,19 +168,16 @@ public class ClienteController {
     @RequestMapping(value = "/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes flash) {
         if (id > 0) {
-            //para elimianr una imagen se debe primero tener el cliente
+            //para eliminar una imagen se debe primero tener el cliente
             Cliente cliente = clienteService.findOne(id);
-            clienteService.delete(id);
+            clienteService.delete(id);//metodo eliminar en jpaRepository
             flash.addFlashAttribute("success", "Cliente Eliminado con exito");
             //imagen
-            Path rootPath = Paths.get("uploads").resolve(cliente.getFoto()).toAbsolutePath();//obtenemso el Path entero de la imagen
-            File archivo= rootPath.toFile();
-            //comprabamos que el archivo se pueda leer y exista
-            if(archivo.exists() && archivo.canRead()){
-                if(archivo.delete()){
-                    flash.addFlashAttribute("info","Foto " + cliente.getFoto() + " eliminada con exito!");
-                }
+
+            if (uploadFileService.delete(cliente.getFoto())) {
+                flash.addFlashAttribute("info", "Foto " + cliente.getFoto() + " eliminada con exito!");
             }
+
         }
         return "redirect:/listar";
     }
