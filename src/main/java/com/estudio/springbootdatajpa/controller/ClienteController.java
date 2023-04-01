@@ -88,8 +88,10 @@ public class ClienteController {
             e.printStackTrace();
         }
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")/*El valor de este encabezado indica que el contenido de la respuesta se debe
+                tratar como un archivo adjunto (attachment) y especifica el nombre del archivo (filename). El nombre del archivo se toma del objeto recurso utilizando el método getFilename().*/
                 .body(recurso);//se pasa a al respuesta atravez del responseEntity y se anexa el recurso al cuerpo de la respuesta
+        /*.body(recurso), establece el cuerpo de la respuesta como el objeto recurso, que en este caso es un archivo. El objeto recurso se pasa al cuerpo de la respuesta utilizando el método body() de ResponseEntity.*/
     }
 
     //crear elementos
