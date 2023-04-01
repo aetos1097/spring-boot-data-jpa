@@ -23,6 +23,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -136,6 +137,19 @@ public class ClienteController {
         }
         //Agregar una Foto
         if(!foto.isEmpty()){//verificamos si hay alguna foto para manipularla
+            if(cliente.getId() != null
+                    && cliente.getId() >0
+                    && cliente.getFoto() != null
+                    && cliente.getFoto().length() >0){
+                // validamso que al foto exista remplazamos la foto antigua por la nueva
+                Path rootPath = Paths.get("uploads").resolve(cliente.getFoto()).toAbsolutePath();//obtenemso el Path entero de la imagen
+                File archivo= rootPath.toFile();
+                //comprabamos que el archivo se pueda leer y exista
+                if(archivo.exists() && archivo.canRead()){
+                    archivo.delete();
+
+                }
+            }
             //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
             String uniqueFilename= UUID.randomUUID().toString() + "_"+ foto.getOriginalFilename();//reescribimos el nombre de la foto a un nombreunico
             Path rootPath= Paths.get("uploads").resolve(uniqueFilename);// se dejafoto.getOriginalFilename() sin el uniqueFilename
@@ -171,8 +185,19 @@ public class ClienteController {
     @RequestMapping(value = "/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes flash) {
         if (id > 0) {
+            //para elimianr una imagen se debe primero tener el cliente
+            Cliente cliente = clienteService.findOne(id);
             clienteService.delete(id);
             flash.addFlashAttribute("success", "Cliente Eliminado con exito");
+            //imagen
+            Path rootPath = Paths.get("uploads").resolve(cliente.getFoto()).toAbsolutePath();//obtenemso el Path entero de la imagen
+            File archivo= rootPath.toFile();
+            //comprabamos que el archivo se pueda leer y exista
+            if(archivo.exists() && archivo.canRead()){
+                if(archivo.delete()){
+                    flash.addFlashAttribute("info","Foto " + cliente.getFoto() + " eliminada con exito!");
+                }
+            }
         }
         return "redirect:/listar";
     }
