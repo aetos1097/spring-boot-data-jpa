@@ -24,3 +24,26 @@ INSERT INTO clientes(nombre, apellido, email, create_at,foto) VALUES ('Jorge', '
 INSERT INTO clientes(nombre, apellido, email, create_at,foto) VALUES ('Isabel', 'Jimenez', 'isabeljimenez@yahoo.com', '2022-03-05','');
 INSERT INTO clientes(nombre, apellido, email, create_at,foto) VALUES ('Mario', 'Martinez', 'mariomartinez@gmail.com', '2021-12-25','');
 INSERT INTO clientes(nombre, apellido, email, create_at,foto) VALUES ('Alejandro', 'Guzman', 'alejandroguzman@yahoo.com', '2022-01-08','');
+
+-- Tabla productos
+INSERT INTO productos(nombre,precio,create_at) VALUES   ('Panasonic Pantalla LCD',529000, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Sony PlayStation 5', 749900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Apple AirPods Pro', 259900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Samsung Galaxy S21 Ultra', 1449900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('LG OLED TV', 799000, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Microsoft Surface Laptop 4', 1299900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Amazon Echo Dot (4th Gen)', 49900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Fitbit Versa 3', 299900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('GoPro HERO10 Black', 599900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('DJI Mavic Air 2S', 1499900, NOW());
+INSERT INTO productos(nombre, precio, create_at) VALUES ('Bose QuietComfort 35 II', 279900, NOW());
+
+-- Facturas
+INSERT INTO facturas(descripcion,observacion,cliente_id,create_at) VALUES ('Factura equipos de oficina',null,1,NOW());
+INSERT INTO facturas_items (cantidad,factura_id, producto_id) VALUES (1,1,1);
+INSERT INTO facturas_items (cantidad,factura_id, producto_id) VALUES (2,1,4);
+INSERT INTO facturas_items (cantidad,factura_id, producto_id) VALUES (1,1,5);
+INSERT INTO facturas_items (cantidad,factura_id, producto_id) VALUES (1,1,7);
+
+INSERT INTO facturas(descripcion,observacion,cliente_id,create_at) VALUES ('Factura Bicicleta','alguna nota',1,NOW());
+INSERT INTO facturas_items(cantidad,factura_id, producto_id) VALUES (3,2,5);

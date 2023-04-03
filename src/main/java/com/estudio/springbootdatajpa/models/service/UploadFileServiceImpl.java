@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
- * Clase que maneja la logicca de las acciones con la foto que se sube
+ * Clase que maneja la logicc=a de las acciones con la foto que se sube
  */
 
 @Service
@@ -38,9 +38,9 @@ public class UploadFileServiceImpl implements IUploadFileService{
 
         return recurso;
     }
-
+    //Copia la imagen en la aplicacion
     @Override
-    public String copy(MultipartFile file) throws IOException {//ccopiar la foto
+    public String copy(MultipartFile file) throws IOException {//copiar la foto
         String uniqueFilename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();//reescribimos el nombre de la foto a un nombreunico
         Path rootPath = getPath(uniqueFilename);
 
@@ -52,7 +52,8 @@ public class UploadFileServiceImpl implements IUploadFileService{
             Esta linea se cambia para colocar una ruta absoluta en el path
             String rootPath="C://Temp//uploads";//esta es par a una ruta externa separada al proyecto*/
 
-        Files.copy(file.getInputStream(), rootPath);
+        Files.copy(file.getInputStream(), rootPath);/* esta línea de código copia el contenido de un archivo cargado en el servidor web a
+        una ubicación específica en el sistema de archivos local*/
 
         return uniqueFilename;
     }
@@ -61,10 +62,10 @@ public class UploadFileServiceImpl implements IUploadFileService{
     public boolean delete(String filename) {//eliminar la foto
         //imagen
         Path rootPath = getPath(filename);//obtenemso el Path entero de la imagen
-        File archivo= rootPath.toFile();
+        File archivo= rootPath.toFile();//convertimos el path a archivo para buscarlo en la carpeta
         //comprabamos que el archivo se pueda leer y exista
         if(archivo.exists() && archivo.canRead()){
-            if(archivo.delete()){
+            if(archivo.delete()){//archivo.delete borra el archivo y devuelve un boolean
                 return true;
             }
         }
@@ -81,7 +82,7 @@ public class UploadFileServiceImpl implements IUploadFileService{
         Files.createDirectory(Paths.get(UPLOADS_FOLDER));
     }
 
-    public Path getPath(String filename) {//obtenemos el path
+    public Path getPath(String filename) {//obtenemos el pathAbsoluto
         return Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
     }
 }

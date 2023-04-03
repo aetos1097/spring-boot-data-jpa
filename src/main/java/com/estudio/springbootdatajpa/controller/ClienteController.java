@@ -78,7 +78,7 @@ public class ClienteController {
         return "listar";
     }
 
-    //Cargar la imagen de forma preprogamatica atravez de la respuesta d eun resource
+    //ver la imagen de forma preprogamatica atravez de la respuesta de un resource
     @GetMapping("/uploads/{filename:.+}")//el filename.+ ayuda a que la extencion no se trunque con un .png,.jpg, etc..
     public ResponseEntity<Resource> verFoto(@PathVariable String filename) {// El Resource se toma del paquete .core.io
         Resource recurso = null;
@@ -139,12 +139,12 @@ public class ClienteController {
             return "form";//si hay errores nos devolvemos al formulario con ruta /form
         }
         //Agregar una Foto
-        if (!foto.isEmpty()) {//verificamos si hay alguna foto para manipularla
+        if (!foto.isEmpty()) {//verificamos si hay alguna foto para actualziarla
             if (cliente.getId() != null
                     && cliente.getId() > 0
                     && cliente.getFoto() != null
                     && cliente.getFoto().length() > 0) {
-                // validamso que al foto exista remplazamos la foto antigua por la nueva
+                // validamos que la foto exista remplazamos la foto antigua por la nueva
                 uploadFileService.delete(cliente.getFoto());
             }
             String uniqueFilename = null;
@@ -155,7 +155,7 @@ public class ClienteController {
             }
             //Path directorioRecursos es para indicar donde se guardaran nuestras imagenes
             flash.addFlashAttribute("info", "Has subido correctamente " + foto.getOriginalFilename() + "");//mensaje de exito
-            cliente.setFoto(uniqueFilename);//pasamos el nombre d ela foto al cliente, queda guardada en la db
+            cliente.setFoto(uniqueFilename);//pasamos el nombre dela foto al cliente, queda guardada en la db
 
         }
         //Crear Cliente

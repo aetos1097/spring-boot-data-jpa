@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity //para tablas
 @Table(name = "clientes")
@@ -42,7 +44,16 @@ public class Cliente implements Serializable {
     }*/
 
     private String foto;
-    private static final long serialVersionUID = 1L;//esta línea de código sirve para mantener la compatibilidad en la serialización de objetos en Java al proporcionar un identificador único a cada clase serializable.
+
+    @OneToMany(mappedBy ="cliente" ,fetch=FetchType.LAZY,cascade=CascadeType.ALL)/*fetch=FetchType.LAZY ayuda a que la consulta traiga solo lo necesario y no todos lo datos
+    mappedBy="cliente" anuncia que sera bidireccional es decir que en facturas hay un elemento cliente y en cliente hay un elemento facturas
+    y al mismo tiempo crea la llave foranea cliente_id en facturas
+    cascade=CascadeType.ALL-> ayuda a que las operaciones relacionadas a este campo se pasen asus atributos hijos*/
+    private List<Factura> facturas;
+
+    public Cliente() {
+        facturas = new ArrayList<Factura>();//crea los objetos por cada cliente
+    }
 
     public Long getId() {
         return id;
@@ -91,4 +102,19 @@ public class Cliente implements Serializable {
     public void setFoto(String foto) {
         this.foto = foto;
     }
+
+    public List<Factura> getFacturas() {
+        //cada que se ejecuta este metodo, se hace una consulta a facturas
+        return facturas;
+    }
+    //se guardan todas
+    public void setFacturas(List<Factura> facturas) {
+        this.facturas = facturas;
+    }
+    //se guarda una por una de las facturas
+    public void addFactura(Factura factura) {
+        facturas.add(factura);
+    }
+    private static final long serialVersionUID = 1L;//esta línea de código sirve para mantener la compatibilidad en la serialización de objetos en Java al proporcionar un identificador único a cada clase serializable.
+
 }
