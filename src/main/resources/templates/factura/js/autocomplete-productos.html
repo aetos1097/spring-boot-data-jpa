@@ -46,6 +46,10 @@
                 return false;
             }
         });
+        $("form").submit(function(){//cuando se envia(submit)
+            $("#plantillaItemsFactura").remove();
+            return;//sin este metodo cuando se envie se tomara el id de la plantilla como un item mas y genera error
+        });
     });
     // este es un objeto con metodos de ayuda, por  ejemplo calular el importe o eliminar una linea de la factura
 

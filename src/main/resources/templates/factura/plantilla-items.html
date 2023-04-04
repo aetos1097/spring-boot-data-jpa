@@ -7,12 +7,14 @@
     <!--    nombre de parametro con las llaves,Es decir este valor id se va a remplazar con el valor real del producto, gracias
     a jquery se tendra la facilidad de eliminar la linea-->
     <tr id="row_{ID}"> <!--columnas-->
-        <td class="d-none"><input typle="hidden" value="{ID}" name="item_id[]"/></td>
+        <td class="d-none"><input typle="hidden" value="{ID}"
+                                  name="item_id[]"/></td>
         <td>{NOMBRE}</td>
         <td>{PRECIO}</td>
         <td><input type="number" value="1" name="cantidad[]" id="cantidad_{ID}"
-                   class="form-control col-sm-4" onChange="itemsHelper.calcularImporte({ID},{PRECIO},this.value);"/></td> <!--onChange="" cuando cambia el valor invocamos la funcion -->
-<!--        el id del se modifica dependiendo  la consulta por medio de jquery-->
+                   class="form-control col-sm-4" onChange="itemsHelper.calcularImporte({ID},{PRECIO},this.value);"/>
+        </td> <!--onChange="" cuando cambia el valor invocamos la funcion -->
+        <!--        el id del se modifica dependiendo  la consulta por medio de jquery-->
         <td><span id="total_importe_{ID}">0</span></td>
         <td><a href="#" class="btn btn-danger btn-xs" onclick="itemsHelper.eliminarLineaFactura({ID});">x</a></td>
     </tr>

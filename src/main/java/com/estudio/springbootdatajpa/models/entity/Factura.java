@@ -79,6 +79,8 @@ public class Factura implements Serializable {//toda clas entitiy como buena pra
     public List<ItemFactura> getItems() {
         return items;
     }
+
+    //agrega los items de la factura que se crean en los controladores
     public void addItemFactura(ItemFactura item) {
         this.items.add(item);
     }

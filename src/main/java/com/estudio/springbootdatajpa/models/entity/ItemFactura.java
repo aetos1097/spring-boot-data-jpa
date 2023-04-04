@@ -35,6 +35,16 @@ public class ItemFactura implements Serializable {
 
         return  cantidad.doubleValue()* producto.getPrecio();//cantidad.doubleValue()-> toma el valor de catindad en int y lo pasa a double
     }
+    //luego de hacer los servicios para los productos si generamos los get and setters
+
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 
     private static final long serialVersionUID = 1L;
 }

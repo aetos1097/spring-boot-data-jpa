@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Clase de tipo Service que esta basada en el patron de disign Fachade
- * Gracias a esta clase podemos acceder a cualquier otra clase Dao que hayamos creado e utilizar su logica
+ * Gracias a esta clase podemos acceder a cualquier otra clase Dao que hayamos creado y utilizar su logica
  */
 @Service
 public class ClienteServiceImpl implements IClienteService {
@@ -75,5 +75,12 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     public void saveFactura(Factura factura) {
         facturaDao.save(factura);
+    }
+
+    @Override
+    @Transactional(readOnly =true)
+    public Producto findProductoById(Long id) {
+        //esta consulta retorna un optional por eso necesita un orElse
+        return productoDao.findById(id).orElse(null);
     }
 }
