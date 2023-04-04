@@ -86,6 +86,7 @@ public class Factura implements Serializable {//toda clas entitiy como buena pra
     public void setItems(List<ItemFactura> items) {
         this.items = items;
     }
+
     public Double getTotal(){
         Double total =0.0;
         int size = items.size();

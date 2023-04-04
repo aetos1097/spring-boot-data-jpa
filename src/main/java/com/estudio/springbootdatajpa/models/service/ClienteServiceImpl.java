@@ -1,7 +1,9 @@
 package com.estudio.springbootdatajpa.models.service;
 
 import com.estudio.springbootdatajpa.models.dao.IClienteDao;
+import com.estudio.springbootdatajpa.models.dao.IProductoDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
+import com.estudio.springbootdatajpa.models.entity.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,10 @@ public class ClienteServiceImpl implements IClienteService {
     //inyectamos el cliente DAO
     @Autowired
     private IClienteDao clienteDao;
+
+    @Autowired
+    private IProductoDao productoDao;
+
     @Override
     @Transactional(readOnly = true)// toma el contenido del metodo y lo envuelve dentro de una transaccion
     public List<Cliente> findAll() {
@@ -50,5 +56,12 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     public void delete(Long id) {
         clienteDao.deleteById(id);
+    }
+
+    //metodo que hara la consulta por nombre
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> findByNombre(String term) {
+        return productoDao.findByNombreLikeIgnoreCase("%"+term+"%");
     }
 }
