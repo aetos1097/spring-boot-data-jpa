@@ -14,6 +14,7 @@
                    class="form-control col-sm-4" onChange="itemsHelper.calcularImporte({ID},{PRECIO},this.value);"/></td> <!--onChange="" cuando cambia el valor invocamos la funcion -->
 <!--        el id del se modifica dependiendo  la consulta por medio de jquery-->
         <td><span id="total_importe_{ID}">0</span></td>
+        <td><a href="#" class="btn btn-danger btn-xs" onclick="itemsHelper.eliminarLineaFactura({ID});">x</a></td>
     </tr>
     </tbody>
 </table>

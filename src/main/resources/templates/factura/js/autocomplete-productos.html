@@ -2,6 +2,7 @@
 <html xmlns:th="http://thymeleaf.org" lang="en">
 
 <body>
+<!--javascript para autocompletar los productos-->
 <script type="text/javascript" th:fragment="javascript">
     $(document).ready(function(){
         $("#buscar_producto").autocomplete({
@@ -37,7 +38,7 @@
                 linea = linea.replace(/{PRECIO}/g, ui.item.precio);
                 //hacemos referencia a la tabbble pero su tbody que dejamos vacio en form
                 $("#cargarItemProductos tbody").append(linea);
-                /*En resumen obbtenemos la plantilla, el contenido html, cambiamos los parametros por el valor(id,nombre,precio)
+                /*En resumen obtenemos la plantilla, el contenido html, cambiamos los parametros por el valor(id,nombre,precio)
                 *y agregamos la linea al tbody de la tabla */
                 //llamamos la funcion helper
                 itemsHelper.calcularImporte(ui.item.value,ui.item.precio,1);
@@ -68,7 +69,11 @@
             var cantidad =$("#cantidad_"+ id).val() ? parseInt($("#cantidad_"+ id).val()) : 0;
             $("#cantidad_"+ id).val(++cantidad);
             this.calcularImporte(id,precio,cantidad);
+        },
+        eliminarLineaFactura: function(id){
+            $("#row_"+id).remove();
         }
+
 
 
     }
