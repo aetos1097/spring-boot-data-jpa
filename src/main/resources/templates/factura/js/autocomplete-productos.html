@@ -25,6 +25,11 @@
             },
             select: function(event, ui){
                 //$("#buscar_producto").val(ui.item.label);
+                if(itemsHelper.hasProducto(ui.item.value)){
+                    itemsHelper.incrementaCantidad(ui.item.value,ui.item.precio);
+                    return false;
+                }
+
                 var linea = $("#plantillaItemsFactura").html();//obtenemos el contenido html atraves del id
                 //ahora reemplazamos el parametro nombre precio por el valor
                 linea = linea.replace(/{ID}/g, ui.item.value);
@@ -34,12 +39,39 @@
                 $("#cargarItemProductos tbody").append(linea);
                 /*En resumen obbtenemos la plantilla, el contenido html, cambiamos los parametros por el valor(id,nombre,precio)
                 *y agregamos la linea al tbody de la tabla */
-
+                //llamamos la funcion helper
+                itemsHelper.calcularImporte(ui.item.value,ui.item.precio,1);
 
                 return false;
             }
         });
     });
+    // este es un objeto con metodos de ayuda, por  ejemplo calular el importe o eliminar una linea de la factura
+
+    var itemsHelper = {
+        calcularImporte: function(id,precio, cantidad){
+            $("#total_importe_" + id).html(parseInt(precio)*parseInt(cantidad));//el metodo .html nos permite agregar contenido
+        },
+        hasProducto: function(id){ //funcion que se encarga de buscar linea por linea en el detalle de la factura  si existe el ide del producto
+            //hago referencia al objeto input en el html
+            var resultado = false;
+            $('input[name="item_id[]"]').each(function(){
+                if(parseInt(id)== parseInt($(this).val())){
+                    resultado =true;
+                }
+            });
+            return resultado;
+
+
+        },
+        incrementaCantidad : function(id,precio){
+            var cantidad =$("#cantidad_"+ id).val() ? parseInt($("#cantidad_"+ id).val()) : 0;
+            $("#cantidad_"+ id).val(++cantidad);
+            this.calcularImporte(id,precio,cantidad);
+        }
+
+
+    }
 </script>
 </body>
 </html>

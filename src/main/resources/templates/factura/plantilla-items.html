@@ -10,7 +10,10 @@
         <td class="d-none"><input typle="hidden" value="{ID}" name="item_id[]"/></td>
         <td>{NOMBRE}</td>
         <td>{PRECIO}</td>
-        <td><input type="number" value="1" name="cantidad[]" id="cantidad_{ID}" class="form-control col-sm-4"></td>
+        <td><input type="number" value="1" name="cantidad[]" id="cantidad_{ID}"
+                   class="form-control col-sm-4" onChange="itemsHelper.calcularImporte({ID},{PRECIO},this.value);"/></td> <!--onChange="" cuando cambia el valor invocamos la funcion -->
+<!--        el id del se modifica dependiendo  la consulta por medio de jquery-->
+        <td><span id="total_importe_{ID}">0</span></td>
     </tr>
     </tbody>
 </table>
