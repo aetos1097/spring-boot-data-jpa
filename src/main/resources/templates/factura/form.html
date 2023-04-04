@@ -45,10 +45,22 @@
                            th:text="'Buscar producto'"></label>
                     <div class="col-sm-6">
                         <input type="text" name="buscar_producto" id="buscar_producto"
-                               class="form-control" />
+                               class="form-control"/>
                     </div>
                 </div>
 
+                <table th:replace="factura/plantilla-items :: itemsFactura"></table>
+                <!--tabla donde se registrara registros de forma dinamica con jquery-->
+                <table id="cargarItemProductos" class="table table-sm table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <div>
                     <div class="col-sm-6">
                         <input type="submit" th:value="${titulo}" class="btn btn-secondary">

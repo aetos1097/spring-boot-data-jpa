@@ -24,7 +24,18 @@
                 });
             },
             select: function(event, ui){
-                $("#buscar_producto").val(ui.item.label);
+                //$("#buscar_producto").val(ui.item.label);
+                var linea = $("#plantillaItemsFactura").html();//obtenemos el contenido html atraves del id
+                //ahora reemplazamos el parametro nombre precio por el valor
+                linea = linea.replace(/{ID}/g, ui.item.value);
+                linea = linea.replace(/{NOMBRE}/g, ui.item.label);
+                linea = linea.replace(/{PRECIO}/g, ui.item.precio);
+                //hacemos referencia a la tabbble pero su tbody que dejamos vacio en form
+                $("#cargarItemProductos tbody").append(linea);
+                /*En resumen obbtenemos la plantilla, el contenido html, cambiamos los parametros por el valor(id,nombre,precio)
+                *y agregamos la linea al tbody de la tabla */
+
+
                 return false;
             }
         });

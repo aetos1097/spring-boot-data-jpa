@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http.thymeleaf.org" lang="en">
+<!--plantilla que obtendra la tabla en el formulario de las facturas-->
+<body>
+<table th:fragment="itemsFactura" class="d-none">
+    <tbody id="plantillaItemsFactura">
+    <!--    nombre de parametro con las llaves,Es decir este valor id se va a remplazar con el valor real del producto, gracias
+    a jquery se tendra la facilidad de eliminar la linea-->
+    <tr id="row_{ID}"> <!--columnas-->
+        <td class="d-none"><input typle="hidden" value="{ID}" name="item_id[]"/></td>
+        <td>{NOMBRE}</td>
+        <td>{PRECIO}</td>
+        <td><input type="number" value="1" name="cantidad[]" id="cantidad_{ID}" class="form-control col-sm-4"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
