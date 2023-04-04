@@ -1,8 +1,10 @@
 package com.estudio.springbootdatajpa.models.service;
 
 import com.estudio.springbootdatajpa.models.dao.IClienteDao;
+import com.estudio.springbootdatajpa.models.dao.IFacturaDao;
 import com.estudio.springbootdatajpa.models.dao.IProductoDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
+import com.estudio.springbootdatajpa.models.entity.Factura;
 import com.estudio.springbootdatajpa.models.entity.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,10 @@ public class ClienteServiceImpl implements IClienteService {
 
     @Autowired
     private IProductoDao productoDao;
+
+    //inyectamos el metodo que hay dentro de la interfaz factura
+    @Autowired
+    private IFacturaDao facturaDao;
 
     @Override
     @Transactional(readOnly = true)// toma el contenido del metodo y lo envuelve dentro de una transaccion
@@ -63,5 +69,11 @@ public class ClienteServiceImpl implements IClienteService {
     @Transactional(readOnly = true)
     public List<Producto> findByNombre(String term) {
         return productoDao.findByNombreLikeIgnoreCase("%"+term+"%");
+    }
+
+    @Transactional
+    @Override
+    public void saveFactura(Factura factura) {
+        facturaDao.save(factura);
     }
 }
