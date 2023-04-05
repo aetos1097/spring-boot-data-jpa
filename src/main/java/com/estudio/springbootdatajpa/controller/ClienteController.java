@@ -49,7 +49,7 @@ public class ClienteController {
     //Metodo para ver el detalle a travez del id
     @GetMapping(value = "/ver/{id}")
     public String ver(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
-        Cliente cliente = clienteService.findOne(id);
+        Cliente cliente = clienteService.fetchByIdWithFacturas(id);//clienteService.findOne(id);
         if (cliente == null) {
             flash.addFlashAttribute("error", cliente);
             return "redirect:/listar";

@@ -22,4 +22,7 @@ public interface IClienteService {
     public Producto findProductoById(Long id);
     public Factura findFacturaById(Long id);
     public void deleteFactura(Long id);
+    public Factura fetchFacturaByIdWithClienteWithItemFacturaWithProducto(Long id);
+    public Cliente fetchByIdWithFacturas(Long id);
+
 }
