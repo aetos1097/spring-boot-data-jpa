@@ -83,4 +83,10 @@ public class ClienteServiceImpl implements IClienteService {
         //esta consulta retorna un optional por eso necesita un orElse
         return productoDao.findById(id).orElse(null);
     }
+
+    @Transactional(readOnly =true)
+    @Override
+    public Factura findFacturaById(Long id) {
+        return facturaDao.findById(id).orElse(null);
+    }
 }

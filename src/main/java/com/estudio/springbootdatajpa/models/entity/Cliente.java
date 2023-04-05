@@ -115,6 +115,12 @@ public class Cliente implements Serializable {
     public void addFactura(Factura factura) {
         facturas.add(factura);
     }
+
+    @Override
+    public String toString() {
+        return nombre + " " + apellido;
+    }
+
     private static final long serialVersionUID = 1L;//esta línea de código sirve para mantener la compatibilidad en la serialización de objetos en Java al proporcionar un identificador único a cada clase serializable.
 
 }

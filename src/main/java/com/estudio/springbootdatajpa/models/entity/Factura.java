@@ -1,6 +1,7 @@
 package com.estudio.springbootdatajpa.models.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class Factura implements Serializable {//toda clas entitiy como buena pra
     @Id()
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty
     private String descripcion;
     private String observacion;
     @Temporal(TemporalType.DATE)
