@@ -61,7 +61,7 @@ public class ClienteController {
 
     // ya no inyectamos el Dao si no la fachada IClienteService private IClienteDao clienteDao;
     //listar los elementos
-    @RequestMapping(value = "/listar", method = RequestMethod.GET)//lo mismo que el get
+    @RequestMapping(value = {"/listar", "/"}, method = RequestMethod.GET)//lo mismo que el get
     public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
         /*se coloca como paramtro de entrada @RequestParam(name="page", defaultValue="0")int page
         para la paginacion al momento de listar*/
