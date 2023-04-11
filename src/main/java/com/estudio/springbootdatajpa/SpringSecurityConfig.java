@@ -1,5 +1,7 @@
 package com.estudio.springbootdatajpa;
 
+import com.estudio.springbootdatajpa.auth.handler.LoginSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+
+    @Autowired
+    private LoginSuccessHandler successHandler;
 
     @Bean
     public static BCryptPasswordEncoder passwordEncoder() {
@@ -50,7 +55,7 @@ public class SpringSecurityConfig {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin().loginPage("/login")
+                .formLogin().successHandler(successHandler).loginPage("/login")
                 .permitAll()
                 .and()
                 .logout()

@@ -5,7 +5,10 @@ import com.estudio.springbootdatajpa.models.dao.IClienteDao;
 import com.estudio.springbootdatajpa.models.entity.Cliente;
 import com.estudio.springbootdatajpa.models.service.IClienteService;
 import com.estudio.springbootdatajpa.models.service.IUploadFileService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +39,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,6 +49,8 @@ import java.util.UUID;
 @Controller
 @SessionAttributes("cliente")//indicamos que se va a guardar en los atributos de la seccion del objeto cliente
 public class ClienteController {
+
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private IClienteService clienteService;
@@ -62,7 +74,29 @@ public class ClienteController {
     // ya no inyectamos el Dao si no la fachada IClienteService private IClienteDao clienteDao;
     //listar los elementos
     @RequestMapping(value = {"/listar", "/"}, method = RequestMethod.GET)//lo mismo que el get
-    public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
+    public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model,
+                         Authentication authentication,
+                         HttpServletRequest request) {
+
+        //validacion de autenticacion
+        if (authentication != null) {
+            logger.info("Hola usuario autenticado, tu username es: ".concat(authentication.getName()));
+
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (hasRole("ROLE_ADMIN")) {
+            logger.info("Hola usuario ".concat(auth.getName()).concat(" tienes acceso"));
+        } else {
+            logger.info("Hola usuario ".concat(auth.getName()).concat(" No tienes acceso"));
+        }
+        SecurityContextHolderAwareRequestWrapper securityContext= new SecurityContextHolderAwareRequestWrapper(request,"ROLE_");
+        if(securityContext.isUserInRole("ADMIN")){
+            logger.info("Forma:SecurityContextHolderAwareRequestWrapper Hola usuario ".concat(auth.getName()).concat(" tienes acceso"));
+        }else{
+            logger.info("Forma:SecurityContextHolderAwareRequestWrapper Hola usuario ".concat(auth.getName()).concat(" No tienes acceso"));
+
+        }
+
         /*se coloca como paramtro de entrada @RequestParam(name="page", defaultValue="0")int page
         para la paginacion al momento de listar*/
         Pageable pageRequest = PageRequest.of(page, 5);/*se importa la interfaz y con el metodo  PageRequest.of(page,5)
@@ -182,5 +216,30 @@ public class ClienteController {
 
         }
         return "redirect:/listar";
+    }
+
+    private boolean hasRole(String role) {
+        SecurityContext context = SecurityContextHolder.getContext();//obtnemos los auth
+        //validamos si es distinto de null
+        if (context == null) {
+            return false;
+        }
+        Authentication auth = context.getAuthentication();
+        if (auth == null) {
+            return false;
+        }
+        //obtenemos una colecciones de roles
+        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();//creamos un generico para los users
+        //forma reducida del foreac de abajo
+        return authorities.contains(new SimpleGrantedAuthority(role));
+        /*
+        for(GrantedAuthority authority : authorities) {
+            //obtenemos el rol
+            if(role.equals(authority.getAuthority())){
+                logger.info("Hola usuario ".concat(auth.getName()).concat(" tu rol es: ").concat(authority.getAuthority()));
+                return true;
+            }
+        }
+        return false;*/
     }
 }
