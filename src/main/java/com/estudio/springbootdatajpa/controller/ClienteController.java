@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -46,6 +47,7 @@ import java.util.UUID;
 /**
  * Clase donde iran los controladores
  */
+@Secured("ROLE_ADMIN")
 @Controller
 @SessionAttributes("cliente")//indicamos que se va a guardar en los atributos de la seccion del objeto cliente
 public class ClienteController {
@@ -59,6 +61,7 @@ public class ClienteController {
     private IUploadFileService uploadFileService;
 
     //Metodo para ver el detalle a travez del id
+    @Secured("ROLE_USER")
     @GetMapping(value = "/ver/{id}")
     public String ver(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
         Cliente cliente = clienteService.fetchByIdWithFacturas(id);//clienteService.findOne(id);
@@ -73,6 +76,7 @@ public class ClienteController {
 
     // ya no inyectamos el Dao si no la fachada IClienteService private IClienteDao clienteDao;
     //listar los elementos
+    @Secured("ROLE_USER")
     @RequestMapping(value = {"/listar", "/"}, method = RequestMethod.GET)//lo mismo que el get
     public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model,
                          Authentication authentication,
@@ -113,6 +117,7 @@ public class ClienteController {
     }
 
     //ver la imagen de forma preprogamatica atravez de la respuesta de un resource
+    @Secured("ROLE_USER")
     @GetMapping("/uploads/{filename:.+}")//el filename.+ ayuda a que la extencion no se trunque con un .png,.jpg, etc..
     public ResponseEntity<Resource> verFoto(@PathVariable String filename) {// El Resource se toma del paquete .core.io
         Resource recurso = null;
@@ -129,6 +134,7 @@ public class ClienteController {
     }
 
     //crear elementos
+    @Secured("ROLE_ADMIN")
     @GetMapping("/form")
     public String crear(Map<String, Object> model) {
         Cliente cliente = new Cliente();//creo una nueva instancia
@@ -138,6 +144,7 @@ public class ClienteController {
         return "form";
     }
 
+    @Secured("ROLE_ADMIN")
     //agregar o editar un elemento
     @GetMapping("/form/{id}")
     public String editar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
@@ -158,7 +165,7 @@ public class ClienteController {
         return "form";
     }
 
-
+    @Secured("ROLE_ADMIN")
     //guardamos los elementos
     @PostMapping("/form")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status) {//colocamos la anotacion Valid en el argumento porque sera lo que se envia y debe estar validado
@@ -200,7 +207,9 @@ public class ClienteController {
         return "redirect:listar";
     }
 
+
     //controlador para eliminar un elemento de la lista
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes flash) {
         if (id > 0) {

@@ -4,6 +4,7 @@ import com.estudio.springbootdatajpa.auth.handler.LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -15,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Clase de tipo configuracion para configurar la seguridad de nuestra app
  */
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
@@ -47,11 +49,11 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/form/**", "/eliminar/**", "/factura/**")
-                .hasRole("ADMIN")
+//                .requestMatchers("/form/**", "/eliminar/**", "/factura/**")
+//                .hasRole("ADMIN")
                 .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/listar").permitAll()
-                .requestMatchers("/ver/**", "/uploads")
-                .hasRole("USER")
+//                .requestMatchers("/ver/**", "/uploads")
+//                .hasRole("USER")
                 .anyRequest()
                 .authenticated()
                 .and()
