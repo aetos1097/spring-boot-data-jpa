@@ -2,7 +2,9 @@ package com.estudio.springbootdatajpa;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,6 +27,10 @@ public class MvcConfig implements WebMvcConfigurer {
 //                .addResourceLocations(resourcePath);//ruta de carpeta externa del programa(Esta se debe crear)
 //        //.addResourceLocations("file:C:/Temp/uploads/") path fijo no dinamico
 //    }
+    @Bean
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
     //se hace un viewController que cargara solo la vista error
     public void addViewControllers(ViewControllerRegistry registry){
         registry.addViewController("/error_403").setViewName("error_403");
