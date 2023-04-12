@@ -228,7 +228,7 @@ public class ClienteController {
     }
 
     private boolean hasRole(String role) {
-        SecurityContext context = SecurityContextHolder.getContext();//obtnemos los auth
+        SecurityContext context = SecurityContextHolder.getContext();//obtenemos los auth
         //validamos si es distinto de null
         if (context == null) {
             return false;
